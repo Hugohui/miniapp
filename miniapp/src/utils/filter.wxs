@@ -1,0 +1,101 @@
+//时间格式化过滤器
+//params: date为秒或者'YYYY-MM-DD HH:MM:SS'格式的时间
+function releaseTimeFormat(date){
+  var timeDes;
+  var str;
+  if(!isNaN(date*1000)){
+    str = date*1000;
+  }else{
+    str = date;
+  }
+  var timePublish = getDate(str);
+  var timeNow = getDate();
+  var minute = 1000 * 60;
+  var hour = minute * 60;
+  var day = hour * 24;
+  var month = day * 30;
+  var year = month * 12;
+  var diffValue = timeNow - timePublish;
+  var diffYear = diffValue / year;
+  var diffMonth = diffValue / month;
+  var diffWeek = diffValue / (7 * day);
+  var diffDay = diffValue / day;
+  var diffHour = diffValue / hour;
+  var diffMinute = diffValue / minute;
+  var nowFullYear = timeNow.getFullYear();
+  var releaseFullYear = timePublish.getFullYear();
+
+  if (releaseFullYear < nowFullYear) {
+      if(!isNaN(date*1000)){
+        var month = timePublish.getMonth()+1;
+        timeDes = timePublish.getFullYear()+'-'+addZero(month)+'-'+addZero(timePublish.getDate())+' '+addZero(timePublish.getHours())+':'+addZero(timePublish.getSeconds());
+      }else{
+        timeDes = date.split(':')[0]+':'+date.split(':')[1];
+      }
+  }else if(diffDay > 1){
+      if(!isNaN(date*1000)){
+        timeDes = addZero(timePublish.getMonth()+1)+'-'+addZero(timePublish.getDate())+' '+addZero(timePublish.getHours())+':'+addZero(timePublish.getSeconds());
+      }else{
+        var temp = date.split('-')[1]+'-'+date.split('-')[2];
+        timeDes = temp.split(':')[0]+':'+temp.split(':')[1];
+      }
+  }
+  else if (diffHour > 1) {
+      timeDes = parseInt(diffHour) + "小时前";
+  }
+  else if (diffMinute > 1) {
+      timeDes = parseInt(diffMinute) + "分钟前";
+  }
+  else {
+      timeDes = "1分钟前";
+  }
+  return timeDes;
+}
+
+function addZero(num){
+  var resNum;
+  if(num<10){
+    resNum = "0"+num;
+  }else{
+    resNum = num;
+  }
+  return resNum;
+}
+
+function videoTimeFormat(s){
+  var second = parseInt(s);
+  var res = "";
+  if(s<60){
+    res = "00:"+second;
+  }else{
+    res = addZero(Math.floor(second/60))+':'+addZero(second%60);
+  }
+  return res;
+}
+function random(len){
+  return Math.floor(Math.random()*len);
+}
+function isEmpty(obj){
+    if(typeof obj == "undefined" || obj == null || obj == ""||JSON.stringify(obj) == "{}"){
+        return true;
+    }else{
+        return false;
+    }
+}
+function compareVersion(current,target) {
+  if (isEmpty(current)||isEmpty(target)) {
+    return true;
+  }
+  var cu = current.split('.').join('');
+  var ta = target.split('.').join('');
+  var res = cu*10000>=ta*10000;
+  console.log("util  current = "+cu+",target="+ta+"result="+res);
+  return cu*10000>=ta*10000;
+}
+
+module.exports = {
+  releaseTimeFormat:releaseTimeFormat,
+  videoTimeFormat:videoTimeFormat,
+  random:random,
+  compareVersion:compareVersion
+};
